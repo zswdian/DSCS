@@ -17,8 +17,8 @@ CREATE TABLE [dbo].[member](
 	[m_id] [int] NOT NULL primary key,
 	[m_name] [varchar](20) NOT NULL,
 	[sex] [varchar](1) NOT NULL,
-	[credential_type] [varchar](20) NOT NULL,
-	[creadential_no] [varchar](20) NOT NULL,
+	[credential_type] [varchar](20) NOT NULL,		--证件类型
+	[creadential_no] [varchar](20) NOT NULL,		--证件号
 	[m_tel] [varchar](11) NOT NULL,
 	[address] [varchar](50) NULL,
 	CONSTRAINT CK_sex1 CHECK (sex='男' OR sex='女'),
@@ -27,20 +27,20 @@ GO
 
 --创建顾客类型表
 CREATE TABLE [dbo].[customertype](
-	[type_id] [int] NOT NULL primary key,
-	[type] [varchar](10) NOT NULL,
+	[type_id] [int] NOT NULL primary key,			--1,2
+	[type] [varchar](10) NOT NULL,					--普通，会员
 	[discount] [float] NOT NULL,
 )
 GO
 
 --创建房间类型表
 CREATE TABLE [dbo].[roomtype](
-	[type_id] [int] NOT NULL primary key,
-	[type] [varchar](10) NOT NULL,
+	[type_id] [int] NOT NULL primary key,	--1,2,3
+	[type] [varchar](10) NOT NULL,			--标准间，长包房，双人房(一张双人床)
 	[bed_num] [int] NOT NULL,
 	[price] [float] NOT NULL,
-	[foregift] [float] NOT NULL,
-	[cl_room] [varchar](1) NOT NULL,
+	[foregift] [float] NOT NULL,			--租金
+	[cl_room] [varchar](1) NOT NULL,		--是否为钟点房
 	[cl_price] [float] NULL,
 	CONSTRAINT CK_cl_room CHECK (cl_room='是' OR cl_room='否'),
 )
@@ -51,8 +51,8 @@ CREATE TABLE [dbo].[roominfo](
 	[room_id] [int] NOT NULL primary key,
 	[type_id] [int] NOT NULL,
 	[state] [varchar](2) NOT NULL,
-	[statetime] [varchar](30) NULL,
-	[remark] [varchar](50) NULL,
+	[statetime] [varchar](30) NULL,			--状态维持时间
+	[remark] [varchar](50) NULL,			--备注，可为空
 	foreign key([type_id]) references [dbo].[roomtype](type_id),
 	CONSTRAINT CK_state CHECK (state='空闲' OR state='入住'),
 )
@@ -85,9 +85,9 @@ CREATE TABLE [dbo].[livein](
 	[room_id] [int] NOT NULL,
 	[customer_id] [varchar](50) NOT NULL,
 	[person_num] [int] NOT NULL,
-	[in_time] [datetime] NOT NULL,
+	[in_time] [datetime] NOT NULL,			--入住时间
 	[money] [float] NOT NULL,
-	[days] [int] NOT NULL,
+	[days] [int] NOT NULL,					--预计住房时间
 	[operator_id] [int] NOT NULL,
 	foreign key([room_id]) references [dbo].[roominfo](room_id),
 	foreign key([operator_id]) references [dbo].[operator](operator_id),
@@ -97,8 +97,8 @@ GO
 --创建结算表
 CREATE TABLE [dbo].[checkout](
 	[chk_no] [int] NOT NULL primary key,
-	[in_no] [int] NOT NULL,
-	[chk_time] [datetime] NOT NULL,
+	[in_no] [int] NOT NULL,					
+	[chk_time] [datetime] NOT NULL,			--结算时间
 	[days] [int] NOT NULL,
 	[money] [float] NOT NULL,
 	[operator_id] [int] NOT NULL,
@@ -204,3 +204,5 @@ create trigger trig_livein_insert
 	update hotelinfo set occupancy = @occupancy;
  end;
 Go
+
+--添加数据

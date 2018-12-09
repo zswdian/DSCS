@@ -1,0 +1,261 @@
+html,body{
+    width: 100%;
+    height: 100%;
+}
+.box{
+    width: 7680px;
+    height: 3240px;
+/*    display: inline;*/
+}
+.left .right .comment{
+    width: 1920px;
+    height: 3240px;
+/*    display: inline;*/
+
+}
+.echbox{
+    width: 1920px;
+    height: 1080px;
+}
+.Contradiction{
+    width: 100%;
+    height: 100%;
+    display:inline;
+    background-color: #001321;
+}
+.Cencomment{
+    width: 3840px;
+    height: 3024px;
+/*    display: inline;*/
+    background-color: #001321;
+}
+.contitle {
+    width: 500px;
+    height: 100px;
+    background: url("../../images/gis/标题_6字.png")no-repeat;
+    background-size: 100% 100%;
+    margin: 20px 0 0 40px;
+}
+.titleimg {
+    width: 550px;
+    background: url("../../images/gis/标题_7字.png")no-repeat;
+}
+.contitle p{
+    width: 100%;
+    display: table-cell;
+    padding-left: 70px;
+    font-size: 50px;
+    font-family: SimHei;
+    color: #0cfccc;
+    text-align: center;
+    line-height: 90px;
+}
+#concie{
+    width:100%;
+    height: 500px;
+    position: absolute;
+    top: 40px;
+    right: -410px;
+}
+.active {
+    background: rebeccapurple;
+    color: #fff;
+}
+/*地图编辑*/
+.maptop {
+    height: 50px;
+    line-height: 50px;
+    background: #fff;
+    box-shadow: 0px 15px 10px -15px #888 !important;
+    font-size: 18px;
+    position: relative;
+    z-index: 999;
+}
+
+.mapcenter {
+    height: 600px;
+}
+
+.mapsystem {
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    background: #20222a;
+}
+
+.mapright {
+    width: 300px;
+    height: 550px;
+    background: #fff;
+    display: none;
+    border-radius: 12px;
+    margin: 5px;
+    position: absolute;
+    right: 0;
+    box-shadow: 0px 0px 3px #888888;
+}
+
+.right-top {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    color: #fff;
+    background: #20222a;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+#right-content {
+    display: none;
+    font-size: 16px;
+}
+
+.close {
+    font-size: 24px;
+    line-height: 43px;
+}
+
+.icon-img {
+    width: 20px;
+    height: 20px;
+    margin: 0 10px 0 10px;
+}
+
+.tag {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    border-bottom: 1px solid #f2f3f4;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+
+/*地图样式*/
+.amap-icon img,
+.amap-marker-content img {
+    width: 25px;
+    height: 25px;
+}
+
+.marker {
+    position: absolute;
+    top: -20px;
+    right: -118px;
+    color: #fff;
+    padding: 4px 10px;
+    box-shadow: 1px 1px 1px rgba(10, 10, 10, .2);
+    white-space: nowrap;
+    font-size: 12px;
+    font-family: "";
+    background-color: #25A5F7;
+    border-radius: 3px;
+}
+
+.input-card {
+    width: 32rem;
+    z-index: 170;
+}
+
+    .input-card .btn {
+        margin-right: .8rem;
+    }
+
+        .input-card .btn:last-child {
+            margin-right: 0;
+        }
+
+.content-window-card {
+    position: relative;
+    box-shadow: none;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    padding: 0;
+}
+
+    .content-window-card p {
+        height: 2rem;
+    }
+
+.custom-info {
+    border: solid 1px silver;
+}
+
+div.info-top {
+    position: relative;
+    background: none repeat scroll 0 0 #F9F9F9;
+    border-bottom: 1px solid #CCC;
+    border-radius: 5px 5px 0 0;
+}
+
+    div.info-top div {
+        display: inline-block;
+        color: #333333;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 31px;
+        padding: 0 10px;
+    }
+
+    div.info-top img {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        transition-duration: 0.25s;
+    }
+
+        div.info-top img:hover {
+            box-shadow: 0px 0px 5px #000;
+        }
+
+div.info-middle {
+    font-size: 12px;
+    padding: 10px 6px;
+    line-height: 20px;
+}
+
+div.info-bottom {
+    height: 0px;
+    width: 100%;
+    clear: both;
+    text-align: center;
+}
+
+    div.info-bottom img {
+        position: relative;
+        z-index: 104;
+    }
+
+span {
+    margin-left: 5px;
+    font-size: 11px;
+}
+
+.info-middle img {
+    float: left;
+    margin-right: 6px;
+}
+
+/*点击出现标记*/
+
+.context_menu {
+    position: relative;
+    min-width: 12rem;
+    padding: 0;
+}
+
+    .context_menu p {
+        cursor: pointer;
+        padding: 0.25rem 1.25rem;
+    }
+
+        .context_menu p:hover {
+            background: #ccc;
+        }

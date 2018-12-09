@@ -1,0 +1,21 @@
+﻿window.addEventListener('resize', function () {
+    //矛盾数据分析
+    ContraChart.resize();
+    CieChart.resize();
+    //重点青少年
+    foChart.resize(); 
+    sxChart.resize();
+    ayChart.resize();
+    //重点人员
+    kpChart.resize();
+    //特殊人群
+    spChart.resize();
+    seChart.resize();
+    ageChart.resize();
+    //未成年子女统计
+    AmChart.resize();
+    //实有人口统计
+    acChart.resize();
+    twChart.resize();
+    teChart.resize();
+})

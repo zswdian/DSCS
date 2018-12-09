@@ -1,0 +1,23 @@
+﻿.layui-form-select .layui-input {
+    padding: 0;
+}
+.btn_group_sm .layui-btn {
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    padding: 0;
+}
+.table_form .layui-input-inline {
+    width: 150px;
+}
+.layui-form-select dl {
+    z-index: 9999;
+}
+
+.layui-form-pane .layui-form-label{
+    width:130px;
+}
+
+.layui-form-pane .layui-input-block {
+    margin-left: 140px;
+}

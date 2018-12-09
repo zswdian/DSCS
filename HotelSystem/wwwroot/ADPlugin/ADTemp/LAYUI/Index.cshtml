@@ -1,0 +1,59 @@
+﻿@model SearchLayer
+@{
+  ViewBag.Title = "{{TableRemark}}管理";
+}
+<i id="auth_data" class="hidden" data-str="@ADAuthButton.Instance.GetAuthButton()"></i>
+<i id="token_cmd"> @Html.AntiForgeryToken()</i>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form table_form">
+            <div class="layui-inline">
+                <label class="layui-form-label">日期范围</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ts" id="ts" placeholder="起始日期" class="layui-input layer_date" data-value="@(Model.ts?.ToString(" yyyy-MM-dd"))">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline">
+                    <input type="text" name="te" id="te" placeholder="结束日期" class="layui-input layer_date" data-value="@(Model.te?.ToString(" yyyy-MM-dd"))">
+                </div>
+                <div class="layui-input-inline">
+                    <select class="az_select" name="kw" data-select="@Model.kw">
+                        <option value="">查询方式</option>
+                        {{option}}
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 180px;">
+                    <input type="text" name="sv" placeholder="关键字" class="layui-input" data-value="@Model.sv">
+                </div>
+                <button type="button" class="layui-btn layui-icon">
+                    &#xe615;
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="layui-row lay_tool">
+        <div lay-event="dels" class="layui-btn layui-btn-danger" data-href='{{action}}DeleteArry' data-auth="dels">
+            批量删除
+        </div>
+        <div  lay-event="show" data-param='{"title":"添加信息","url":"{{action}}Create","btn":"true"}' class="layui-btn layui-btn-normal" data-auth="add">
+            添加数据
+        </div>
+    </div>
+</div>
+<table class="az_table" lay-data="@Model.GetTable("{{action}}GetList")" >
+    <thead>
+        <tr>
+            <th lay-data="{type:'numbers'}"></th>
+            <th lay-data="{type:'checkbox'}"></th>
+            {{Columns}}
+            <th lay-data="{fixed: 'right',width:200,toolbar: '#az_toolbar'}">操作</th>
+        </tr>
+    </thead>
+</table>
+<div class="az_toolbar" id="az_toolbar">
+    <div class="layui-btn-group btn_group_sm">
+        <a class="layui-btn layui-btn-primary layui-btn-xs  layui-icon layui-icon-search" title="数据详情" lay-event="detail" data-param='{"title":"数据详情","url":"{{action}}Details"}' data-auth="details"></a>
+        <a class="layui-btn layui-btn-xs  layui-icon layui-icon-edit" lay-event="edit" title="数据编辑" data-param='{"title":"数据编辑","url":"{{action}}Edit","btn":"true"}' data-auth="edit"></a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs  layui-icon layui-icon-delete" lay-event="visit" title="数据删除" data-param='{"title":"是否确认删除！","url":"{{action}}Delete"}' data-auth="del"></a>
+    </div>
+</div>

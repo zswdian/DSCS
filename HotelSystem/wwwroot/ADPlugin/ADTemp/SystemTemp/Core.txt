@@ -1,0 +1,15 @@
+﻿namespace AD.Models.Entity
+{{
+{0}
+}}
+#*1#
+    /// <summary>
+    /// {0}
+    /// </summary>
+    public enum {1}
+    {{
+{2}
+    }}
+#*2# 
+#*3# 
+#*4#         

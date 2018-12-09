@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\ADPlugin\ADTemp\**" />
+    <Content Remove="wwwroot\ADPlugin\ADTemp\**" />
+    <EmbeddedResource Remove="wwwroot\ADPlugin\ADTemp\**" />
+    <None Remove="wwwroot\ADPlugin\ADTemp\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\js\jquery-1.10.2.min.js" />
+    <Content Remove="wwwroot\js\jsAddresss.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AD.BDDA\AD.BDDA.csproj" />
+    <ProjectReference Include="..\AD.BLL\AD.BLL.csproj" />
+    <ProjectReference Include="..\AD.Common\AD.Common.csproj" />
+    <ProjectReference Include="..\AD.SysPlatform\AD.SysPlatform.csproj" />
+  </ItemGroup>
+
+</Project>

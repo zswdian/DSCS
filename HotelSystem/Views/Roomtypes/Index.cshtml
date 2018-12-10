@@ -1,0 +1,56 @@
+﻿@model IEnumerable<HotelSystem.Models.Roomtype>
+
+@{
+    ViewData["Title"] = "房间类型管理";
+}
+
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/style/admin.css" rel="stylesheet" />
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/style/login.css" rel="stylesheet" />
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+<script src="~/layuiAdmin.std-v1.0.0/dist/layuiadmin/layui/layui.js"></script>
+
+<a href="/Roomtypes/Create" class="layui-btn layui-btn-radius layui-btn-normal">添加房间类型</a>
+
+<table class="layui-table">
+    <thead>
+        <tr>
+            <th lay-data="{field:'Type'}">房间类型</th>
+            <th lay-data="{field:'BedNum'}">床数</th>
+            <th lay-data="{field:'Price'}">价格</th>
+            <th lay-data="{field:'Foregift'}">押金</th>
+            <th lay-data="{field:'ClRoom'}">是否钟点房</th>
+            <th lay-data="{field:'ClPrice'}">会员价格</th>
+            <th lay-data="{fixed: 'right',width:200,toolbar: '#az_toolbar'}">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BedNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Foregift)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClRoom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClPrice)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.TypeId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.TypeId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.TypeId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

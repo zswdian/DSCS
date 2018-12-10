@@ -1,0 +1,54 @@
+﻿@model HotelSystem.Models.Roomtype
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Roomtype</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.BedNum)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.BedNum)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Foregift)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Foregift)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ClRoom)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ClRoom)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ClPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ClPrice)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.TypeId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

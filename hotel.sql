@@ -16,7 +16,7 @@ if exists(select * from sysobjects where name = 'roomtype') drop table roomtype;
 CREATE TABLE [dbo].[member](
 	[m_id] [int] NOT NULL primary key,
 	[m_name] [varchar](20) NOT NULL,
-	[sex] [varchar](1) NOT NULL,
+	[sex] [varchar](2) NOT NULL,
 	[credential_type] [varchar](20) NOT NULL,		--证件类型
 	[creadential_no] [varchar](20) NOT NULL,		--证件号
 	[m_tel] [varchar](11) NOT NULL,
@@ -36,11 +36,11 @@ GO
 --创建房间类型表
 CREATE TABLE [dbo].[roomtype](
 	[type_id] [int] NOT NULL primary key,	--1,2,3
-	[type] [varchar](10) NOT NULL,			--标准间，长包房，双人房(一张双人床)
+	[type] [varchar](15) NOT NULL,			--标准间，长包房，双人房(一张双人床)
 	[bed_num] [int] NOT NULL,
 	[price] [float] NOT NULL,
 	[foregift] [float] NOT NULL,			--租金
-	[cl_room] [varchar](1) NOT NULL,		--是否为钟点房
+	[cl_room] [varchar](2) NOT NULL,		--是否为钟点房
 	[cl_price] [float] NULL,
 	CONSTRAINT CK_cl_room CHECK (cl_room='是' OR cl_room='否'),
 )
@@ -50,7 +50,7 @@ GO
 CREATE TABLE [dbo].[roominfo](
 	[room_id] [int] NOT NULL primary key,
 	[type_id] [int] NOT NULL,
-	[state] [varchar](2) NOT NULL,
+	[state] [varchar](4) NOT NULL,
 	[statetime] [varchar](30) NULL,			--状态维持时间
 	[remark] [varchar](50) NULL,			--备注，可为空
 	foreign key([type_id]) references [dbo].[roomtype](type_id),
@@ -63,7 +63,7 @@ CREATE TABLE [dbo].[customer](
 	[customer_id] [int] NOT NULL primary key,
 	[type_id] [int] NOT NULL,
 	[customer_name] [varchar](20) NOT NULL,
-	[sex] [varchar](1) NOT NULL,
+	[sex] [varchar](2) NOT NULL,
 	[credential_type] [varchar](20) NOT NULL,
 	[credential_no] [varchar](20) NOT NULL,
 	foreign key([type_id]) references [dbo].[customertype](type_id),
@@ -75,7 +75,7 @@ GO
 CREATE TABLE [dbo].[operator](
 	[operator_id] [int] NOT NULL primary key,
 	[operator_name] varchar(20)	NOT NULL,
-	[pwd] [varchar](10) NOT NULL,
+	[pwd] [varchar](15) NOT NULL,
 )
 GO
 

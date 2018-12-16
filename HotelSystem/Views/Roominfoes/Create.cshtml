@@ -1,0 +1,72 @@
+﻿@model HotelSystem.Models.Roominfo
+
+@{
+    ViewData["Title"] = "Create";
+}
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+<script src="~/layuiAdmin.std-v1.0.0/dist/layuiadmin/layui/layui.js"></script>
+<div class="form_body">
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create" class="layui-form layui-form-pane ">
+                <div class="layui-table">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class='layui-form-item'>
+                        <label class='layui-form-label'>房间号</label>
+                        <div class='layui-input-block'>
+                            <input asp-for="RoomId" class="layui-input" />
+                            <span asp-validation-for="RoomId" class="text-danger"></span>
+
+                        </div>
+
+                    </div>
+                    <div class='layui-form-item'>
+                        <label class='layui-form-label'>房间类型</label>
+                        <div class='layui-input-block'>
+                            <div class="form-group">
+                                <select asp-for="TypeId" class="form-control" asp-items="ViewBag.TypeId"></select>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class='layui-form-item'>
+                        <label class='layui-form-label'>房间状态</label>
+                        <div class='layui-input-block'>
+                            <input asp-for="State" class="layui-input" />
+                            <span asp-validation-for="State" class="text-danger"></span>
+
+                        </div>
+
+                    </div>
+                    <div class='layui-form-item'>
+                        <label class='layui-form-label'>状态时间</label>
+                        <div class='layui-input-block'>
+                            <input asp-for="Statetime" class="layui-input" />
+                            <span asp-validation-for="Statetime" class="text-danger"></span>
+
+                        </div>
+
+                    </div>
+                    <div class='layui-form-item'>
+                        <label class='layui-form-label'>备注</label>
+                        <div class='layui-input-block'>
+                            <input asp-for="Remark" class="layui-input" />
+                            <span asp-validation-for="Remark" class="text-danger"></span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <a href="/Roominfoes/Index" class="layui-btn layui-btn-normal">返回</a>
+                        <input type="submit" value="提交" class="btn btn-default layui-btn layui-btn-radius layui-btn-warm" />
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>

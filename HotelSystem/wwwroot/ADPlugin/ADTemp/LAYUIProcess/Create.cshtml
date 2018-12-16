@@ -1,0 +1,12 @@
+﻿<div class="layui-hide">
+    @model ProcessMiddleware
+</div> 
+<div class="form_body">
+    <form class="layui-form layui-form-pane az_form" action="/FlowForm/FlowManager/DataCenter" method="post">
+        <div id="token_cmd">
+            @Html.AntiForgeryToken()
+            <input class="ProcessMiddleware" name="ProcessMiddleware" type="text" value="@Model.GetJson()"  data-ctr="@Model.getFileds()" />
+        </div> 
+{{FormField}}   
+    </form>
+</div> 

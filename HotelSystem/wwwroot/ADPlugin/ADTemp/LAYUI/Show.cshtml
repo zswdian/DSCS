@@ -1,0 +1,21 @@
+﻿<div class="layui-hide">
+@model SearchLayer
+@{
+  ViewBag.Title = "{{TableRemark}}选择";
+}
+</div>
+
+<table class="az_table" lay-data="@Model.GetTable("{{action}}GetList",50,"toolbar:false,")" >
+    <thead>
+        <tr>
+            <th lay-data="{type:'numbers'}"></th> 
+{{Columns}}
+            <th lay-data="{fixed: 'right',width:80,toolbar: '#az_toolbar'}">操作</th>
+        </tr>
+    </thead>
+</table>
+<div class="az_toolbar" id="az_toolbar">
+    <div class="layui-btn-group btn_group_sm">
+        <a class="layui-btn layui-btn-xs " lay-event="select" data-name="{{FirstName}}">选择</a>   
+    </div>
+</div> 

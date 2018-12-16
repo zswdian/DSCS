@@ -1,0 +1,61 @@
+﻿        <div class="layui-form-item">
+            <label class="layui-form-label">{0}</label>
+            <div class="layui-input-block">
+{1}
+            </div>
+        </div>
+#*1#
+        /// <summary>
+        /// {0}
+        /// </summary>
+#*2#
+        public {0} {1} {{ get; set; }}
+#*3#
+            <th lay-data="{{field:'{0}'}}">{1}</th>
+#*4#
+                        <option value='{0}' {2}>{1}</option>
+#*5#
+    <dt>{0}:</dt><dd>@Model.{1}</dd>
+#*6#
+                <input type='{0}' name='{1}' class='layui-input {3}' value='{2}' />
+#*7#
+                <script class='az_ueditor' id='{0}' type='text/plain'></script>
+#*8#
+                <textarea name='{0}' placeholder='请输入内容' class='layui-textarea'>{1}</textarea>
+#*9#
+                <input type='checkbox' name='{0}' lay-text='{1}' lay-skin='switch' value="false" {2}>
+#*10#
+                <input type='checkbox' name='{0}' title='{1}' value='{2}' {3}>
+#*11#
+                <input type='radio' name='{0}' title='{1}' value='{2}' {3}>
+#*12#
+        <div class='layui-form-item'>
+{0}
+        </div>
+#*13#
+            <label class='layui-form-label'>{0}</label>
+            <div class='layui-input-{2}'>
+{1}
+            </div>
+#*14#
+          <div class='layui-inline'>
+{0}
+          </div>
+#*15#
+                <select name="{1}" class="form-control" lay-ignore>
+{0}
+                </select>
+#*16#
+        /// <summary>
+        ///  {0}枚举
+        /// </summary>
+        [NotMapped]
+        public string {1}Enum {{ get {{
+	        {3}               return {2};
+            }}
+        }}
+		 
+#*17#     string[] array = {{ "{0}" }};
+#*18#
+#*19#
+#*20#

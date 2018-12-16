@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "登录界面";
+}
+<script>
+    loadTopWindow();
+</script>
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/style/admin.css" rel="stylesheet" />
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/style/login.css" rel="stylesheet" />
+<script src="~/ADPlugin/third/jsencrypt.min.js"></script>
+
+<div class="loginbj">
+    <div class="layui-container ">
+        <header class="login-head">
+           @*酒店管理系统*@
+        </header>
+        <div class="layui-row">
+            <div class="layui-col-lg6 layui-col-md6">
+                <div class="layadmin-user-login layadmin-user-display-show" style="display: none;">
+                    <img src="~/images/城市.png" alt="" style="width: 117%">
+
+                </div>
+            </div>
+            <form action="/Login" class="layui-form az_form" method="post">
+                <div class="layui-col-lg6 layui-col-md6">
+                    <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+
+                        <div class="layadmin-user-login-main login-box">
+                            <div class="layadmin-user-login-box layadmin-user-login-header login-form-box">
+                                <p class="login-title">用户登录</p>
+                            </div>
+                            <div class="layadmin-user-login-box login-form-box layadmin-user-login-body layui-form">
+                                <div class="layui-form-item login-user-input">
+                                    <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+                                    <input type="text" name="userName" id="LAY-user-login-username" lay-verify="required" placeholder="用户名" class="layui-input">
+                                </div>
+                                <div class="layui-form-item login-user-input">
+                                    <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+                                    <input type="password" name="passWord" id="LAY-user-login-password" placeholder="密码" class="layui-input">
+                                </div>
+                                <div class="layui-form-item login-user-input">
+                                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

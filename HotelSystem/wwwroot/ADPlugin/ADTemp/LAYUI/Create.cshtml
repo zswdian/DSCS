@@ -1,0 +1,18 @@
+﻿<div class="layui-hide">
+{{model}}
+@{
+    ViewBag.Title = "{{TableRemark}}";
+}
+</div> 
+<div class="form_body">
+    <form class="layui-form layui-form-pane az_form" action="{{action}}" method="post">
+        <div id="token_cmd">
+            @Html.AntiForgeryToken()
+        </div>
+        {{FormField}} 
+        <div class="az_tool_bottom hidden">
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <button type="submit" class="layui-btn">立即提交</button> 
+        </div>
+    </form>
+</div> 

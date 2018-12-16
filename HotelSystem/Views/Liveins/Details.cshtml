@@ -1,0 +1,60 @@
+﻿@model HotelSystem.Models.Livein
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Livein</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CustomerId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CustomerId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PersonNum)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PersonNum)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.InTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.InTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Money)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Money)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Days)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Days)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Operator)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Operator.OperatorName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Room)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Room.State)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.InNo">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

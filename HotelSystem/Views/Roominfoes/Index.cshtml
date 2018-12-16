@@ -1,0 +1,52 @@
+﻿@model IEnumerable<HotelSystem.Models.Roominfo>
+
+@{
+    ViewData["Title"] = "房间信息界面";
+}
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/style/admin.css" rel="stylesheet" />
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/style/login.css" rel="stylesheet" />
+<link href="~/layuiAdmin.std-v1.0.0/src/layuiadmin/layui/css/layui.css" rel="stylesheet" />
+<script src="~/layuiAdmin.std-v1.0.0/dist/layuiadmin/layui/layui.js"></script>
+
+<a href="/Roominfoes/Create" class="layui-btn layui-btn-radius layui-btn-normal">添加房间数据</a>
+
+<table class="layui-table" id="Room" lay-filter="Room">
+    <thead>
+        <tr>
+            <th lay-data="{field:'RoomId'}">房间号</th>
+            <th lay-data="{field:'Type'}">房间类型</th>
+            <th lay-data="{field:'State'}">房间状态</th>
+            <th lay-data="{field:'Statetime'}">时间</th>
+            <th lay-data="{field:'Remark'}">备注</th>
+            <th lay-data="{fixed: 'right',width:200,toolbar: '#az_toolbar'}">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.State)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Statetime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Remark)
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.RoomId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.RoomId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.RoomId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,64 @@
+﻿<div class="layui-hide">
+@model SearchLayer
+@{
+  ViewBag.Title = "{{TableRemark}}管理";
+}
+</div>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form table_form" action="{{action}}Index">
+            <div class="layui-inline">
+                <label class="layui-form-label">日期范围</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ts" id="ts" placeholder="起始日期" class="layui-input layer_date" data-value="@(Model.ts?.ToString(" yyyy-MM-dd"))">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline">
+                    <input type="text" name="te" id="te" placeholder="结束日期" class="layui-input layer_date" data-value="@(Model.te?.ToString(" yyyy-MM-dd"))">
+                </div>
+                <div class="layui-input-inline">
+                    <select class="az_select" name="kw" data-select="@Model.kw">
+                        <option value="">查询方式</option> 
+{{option}}
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 180px;">
+                    <input type="text" name="sv" placeholder="关键字" class="layui-input" data-value="@Model.sv">
+                </div>
+                <button type="submit" class="layui-btn layui-icon">
+                    &#xe615;
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="layui-row layui-bg-green" style="padding:4px;">
+        <div id="token_cmd">
+            @Html.AntiForgeryToken()
+        </div>
+        <div id="az_dels" class="layui-btn layui-btn-danger" data-href='{{action}}DeleteArry'>
+            批量删除
+        </div>
+        <div data-param='{"title":"添加信息","url":"{{action}}Create","btn":"true"}' class="layui-btn layui-btn-normal az_show">
+            添加数据
+        </div>
+    </div>
+</div>
+
+<table class="layui-table" lay-data="@Model.GetTable()" lay-filter="az-table" id="az-table">
+    <thead>
+        <tr>
+            <th lay-data="{type:'numbers'}"></th>
+            <th lay-data="{type:'checkbox'}"></th> 
+{{Columns}}
+            <th lay-data="{toolbar: '#az_toolbar'}">操作</th>
+        </tr>
+    </thead>
+</table>
+<script type="text/html" id="az_toolbar">
+    <div class="layui-btn-group">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" data-param='{"title":"详情信息","url":"{{action}}Details"}'>查看</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit" data-param='{"title":"编辑信息","url":"{{action}}Edit","btn":"true"}'>编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="visit" data-param='{"title":"是否确认删除！","url":"{{action}}Delete"}'>删除</a>
+    </div>
+</script>
+<script src="~/Content/AZPlugin/LayList.js"></script>

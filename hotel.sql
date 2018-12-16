@@ -206,3 +206,5 @@ create trigger trig_livein_insert
 Go
 
 --添加数据
+
+--存储过程

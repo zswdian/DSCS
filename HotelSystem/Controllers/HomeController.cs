@@ -29,7 +29,8 @@ namespace HotelSystem.Controllers
             result.Code = "6100"; //整窗口跳转
             if (result.Success)
             {
-                result.Url = "/SystemHome/Index";
+                // result.Url = "/SystemHome/Index";
+                return Redirect("/SystemHome/Index");
 
             }
             return Json(result);

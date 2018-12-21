@@ -14,22 +14,21 @@ if exists(select * from sysobjects where name = 'roomtype') drop table roomtype;
 
 --创建会员表
 CREATE TABLE [dbo].[member](
-	[m_id] [int] NOT NULL primary key,
+	[m_id] [int] primary key IDENTITY,
 	[m_name] [varchar](20) NOT NULL,
 	[sex] [varchar](2) NOT NULL,
-	[credential_type] [varchar](20) NOT NULL,		--证件类型
-	[creadential_no] [varchar](20) NOT NULL,		--证件号
+	[credential_no] [varchar](20) NOT NULL,		--证件号
 	[m_tel] [varchar](11) NOT NULL,
 	[address] [varchar](50) NULL,
+	[discount] [float] NOT NULL,
 	CONSTRAINT CK_sex1 CHECK (sex='男' OR sex='女'),
 ) 
 GO
 
 --创建顾客类型表
 CREATE TABLE [dbo].[customertype](
-	[type_id] [int] NOT NULL primary key,			--1,2
+	[type_id] [int] NOT NULL primary key,			--0,1
 	[type] [varchar](10) NOT NULL,					--普通，会员
-	[discount] [float] NOT NULL,
 )
 GO
 
@@ -40,18 +39,14 @@ CREATE TABLE [dbo].[roomtype](
 	[bed_num] [int] NOT NULL,
 	[price] [float] NOT NULL,
 	[foregift] [float] NOT NULL,			--租金
-	[cl_room] [varchar](2) NOT NULL,		--是否为钟点房
-	[cl_price] [float] NULL,
-	CONSTRAINT CK_cl_room CHECK (cl_room='是' OR cl_room='否'),
 )
 GO
 
 --创建房间信息表
 CREATE TABLE [dbo].[roominfo](
-	[room_id] [int] NOT NULL primary key,
+	[room_id] [int] primary key IDENTITY,
 	[type_id] [int] NOT NULL,
 	[state] [varchar](4) NOT NULL,
-	[statetime] [varchar](30) NULL,			--状态维持时间
 	[remark] [varchar](50) NULL,			--备注，可为空
 	foreign key([type_id]) references [dbo].[roomtype](type_id),
 	CONSTRAINT CK_state CHECK (state='空闲' OR state='入住'),
@@ -60,11 +55,10 @@ GO
 
 --创建顾客表
 CREATE TABLE [dbo].[customer](
-	[customer_id] [int] NOT NULL primary key,
-	[type_id] [int] NOT NULL,
+	[customer_id] [int] primary key IDENTITY,
+	[type_id] [int] default 0 NOT NULL,
 	[customer_name] [varchar](20) NOT NULL,
 	[sex] [varchar](2) NOT NULL,
-	[credential_type] [varchar](20) NOT NULL,
 	[credential_no] [varchar](20) NOT NULL,
 	foreign key([type_id]) references [dbo].[customertype](type_id),
 	CONSTRAINT CK_sex2 CHECK (sex='男' OR sex='女'),
@@ -73,7 +67,7 @@ GO
 
 --创建操作员表
 CREATE TABLE [dbo].[operator](
-	[operator_id] [int] NOT NULL primary key,
+	[operator_id] [int] primary key IDENTITY,
 	[operator_name] varchar(20)	NOT NULL,
 	[pwd] [varchar](15) NOT NULL,
 )
@@ -81,12 +75,11 @@ GO
 
 --创建入住信息表
 CREATE TABLE [dbo].[livein](
-	[in_no] [int] NOT NULL primary key,
+	[in_no] [int] primary key IDENTITY,
 	[room_id] [int] NOT NULL,
 	[customer_id] [varchar](50) NOT NULL,
 	[person_num] [int] NOT NULL,
 	[in_time] [datetime] NOT NULL,			--入住时间
-	[money] [float] NOT NULL,
 	[days] [int] NOT NULL,					--预计住房时间
 	[operator_id] [int] NOT NULL,
 	foreign key([room_id]) references [dbo].[roominfo](room_id),
@@ -96,11 +89,11 @@ GO
 
 --创建结算表
 CREATE TABLE [dbo].[checkout](
-	[chk_no] [int] NOT NULL primary key,
+	[chk_no] [int] primary key IDENTITY, 
 	[in_no] [int] NOT NULL,					
 	[chk_time] [datetime] NOT NULL,			--结算时间
-	[days] [int] NOT NULL,
-	[money] [float] NOT NULL,
+	[days] [int] default 0 NOT NULL,
+	[money] [float] default 0 NOT NULL,
 	[operator_id] [int] NOT NULL,
 	foreign key([in_no]) references [dbo].[livein](in_no),
 	foreign key([operator_id]) references [dbo].[operator](operator_id),
@@ -118,11 +111,46 @@ CREATE TABLE [dbo].[hotelinfo](
 	[double_bed_room_num] [int] NOT NULL,
 	[vacant_double_bed_room_num] [int] NOT NULL,
 	[current_person_num] [int] NOT NULL,
-	[total_num] [int] NOT NULL,
 	[occupancy] [float] NOT NULL,
 )
 GO
 
+--添加数据
+
+--存储过程
+--查看满足条件的空房间信息
+if exists(select * from sysobjects where type='p' and name='proc_find_room') drop PROCEDURE proc_find_room;
+GO
+CREATE PROCEDURE proc_find_room
+	@typeId int
+	AS
+SELECT * from roominfo
+WHERE type_id = @typeId and state = '空闲'
+GO
+
+--查看顾客是否为会员
+if exists(select * from sysobjects where type='p' and name='proc_is_member') drop PROCEDURE proc_is_member;
+GO
+CREATE PROCEDURE proc_is_member
+	@credentialNo char,
+	@isMember int OUTPUT
+	AS
+SELECT @ismember = count(*) from member
+where credential_no = @credentialNo
+GO
+
+--查看房间价钱
+if exists(select * from sysobjects where type='p' and name='proc_room_price') drop PROCEDURE proc_room_price;
+GO
+CREATE PROCEDURE proc_room_price
+	@price float OUTPUT,
+	@roomId int
+	AS
+select @price = price from roomtype rt,roominfo ri
+where ri.type_id = rt.type_id and ri.room_id = @roomid
+GO
+
+--触发器
 --创建customer insert触发器
 if exists(select * from sysobjects where type='tr' and name='trig_customer_insert') drop trigger trig_customer_insert;
 GO
@@ -132,9 +160,14 @@ create trigger trig_customer_insert
  as
  begin
 	declare @perNum int;
+	declare @customerId int;
+	declare @typeId int;
+	declare @credentialNo char;
+	select @customerId = customer_id,@credentialNo = credential_no from inserted;
+	EXEC proc_is_member @credentialNo,@typeId OUTPUT;
 	select @perNum = COUNT(*) from customer;
 	update hotelinfo set current_person_num = @perNum;
-	update hotelinfo set total_num = @perNum;
+	update customer set type_id = @typeId;  
  end;
 GO
 
@@ -195,16 +228,65 @@ create trigger trig_livein_insert
  after insert
  as
  begin
+ 	declare @roomId int;
 	declare @occupancy float;
 	declare @roomNum int;
 	declare @liveInRoomNum int;
+	select @roomId = room_id from inserted;
 	select @roomNum = room_num from hotelinfo;
 	select @liveInRoomNum = COUNT(*) from livein;
 	select @occupancy = (@liveInRoomNum+0.0) / @roomNum;
 	update hotelinfo set occupancy = @occupancy;
+	update roominfo set state = '入住' where room_id = @roomId;
  end;
 Go
 
---添加数据
+--创建checkout insert触发器
+if exists(select * from sysobjects where type='tr' and name='trig_checkout_insert') drop trigger trig_checkout_insert;
+GO
+CREATE TRIGGER trig_checkout_insert
+ on checkout
+ after INSERT
+ as
+ BEGIN
+	DECLARE @chkNo int;
+	DECLARE @roomId int;
+	DECLARE @inNo int;
+	DECLARE @days int;
+	DECLARE @inTime DATETIME;
+	DECLARE @chkTime DATETIME;
+	SELECT @chkNo = chk_no,@inNo = in_no,@chkTime = chk_time from inserted;
+	SELECT @roomId = room_id,@inTime = in_time from livein where in_no = @inNO;
+	SELECT @days = datediff(day,@inTime,@chkTime);
+	UPDATE roominfo set state = '空闲' where room_id = @roomId;
+	UPDATE checkout set days = @days where chk_no = @chkNo;
+ END;
+GO
 
---存储过程
+--创建结算总视图
+if exists(select * from sysobjects where name='check_view') DROP view check_view;
+GO
+CREATE VIEW check_view AS
+SELECT rt.type,rt.bed_num,rt.price,rt.foregift,l.person_num,l.in_time,c.chk_time,l.days as days1,c.days as days2,
+c.money,l.operator_id as livein_operator_id,c.operator_id as checkout_operator_id
+from roomtype rt,roominfo ri,livein l,checkout c
+where c.in_no = l.in_no and l.room_id = ri.room_id and ri.type_id = rt.type_id
+GO
+
+--创建会员索引
+if exists(select * from sysobjects where name='index_member') DROP index index_member on member;
+GO
+CREATE index index_member on member(m_id)
+GO
+
+--创建房间索引
+if exists(select * from sysobjects where name='index_room') DROP index index_room on roominfo;
+GO
+CREATE INDEX index_room on roominfo(room_id)
+GO
+
+--创建顾客索引
+if exists(select * from sysobjects where name='index_customer') DROP index index_customer on customer;
+GO
+CREATE INDEX index_customer on customer(type_id desc);
+GO

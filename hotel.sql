@@ -56,7 +56,7 @@ GO
 --创建顾客表
 CREATE TABLE [dbo].[customer](
 	[customer_id] [int] primary key IDENTITY,
-	[type_id] [int] default 0 NOT NULL,
+	[type_id] [int] default(0) NOT NULL,
 	[customer_name] [varchar](20) NOT NULL,
 	[sex] [varchar](2) NOT NULL,
 	[credential_no] [varchar](20) NOT NULL,
@@ -92,8 +92,8 @@ CREATE TABLE [dbo].[checkout](
 	[chk_no] [int] primary key IDENTITY, 
 	[in_no] [int] NOT NULL,					
 	[chk_time] [datetime] NOT NULL,			--结算时间
-	[days] [int] default 0 NOT NULL,
-	[money] [float] default 0 NOT NULL,
+	[days] [int] default(0) NOT NULL,
+	[money] [float] default(0) NOT NULL,
 	[operator_id] [int] NOT NULL,
 	foreign key([in_no]) references [dbo].[livein](in_no),
 	foreign key([operator_id]) references [dbo].[operator](operator_id),
@@ -102,20 +102,19 @@ GO
 
 --创建酒店信息总览表
 CREATE TABLE [dbo].[hotelinfo](
-	[room_num] [int] NOT NULL,
-	[vacant_room_num] [int] NOT NULL,
-	[standard_room_num] [int] NOT NULL,
-	[vacant_standard_room_num] [int] NOT NULL,
-	[permanent_room_num] [int] NOt NULL,
-	[vacant_permanent_room_num] [int] NOt NULL,
-	[double_bed_room_num] [int] NOT NULL,
-	[vacant_double_bed_room_num] [int] NOT NULL,
-	[current_person_num] [int] NOT NULL,
-	[occupancy] [float] NOT NULL,
+	[id] [int] primary key,
+	[room_num] [int] default(0),
+	[vacant_room_num] [int] default(0),
+	[standard_room_num] [int] default(0),
+	[vacant_standard_room_num] [int] default(0),
+	[permanent_room_num] [int] default(0),
+	[vacant_permanent_room_num] [int] default(0),
+	[double_bed_room_num] [int] default(0),
+	[vacant_double_bed_room_num] [int] default(0),
+	[current_person_num] [int] default(0),
+	[occupancy] [float] default(0),
 )
 GO
-
---添加数据
 
 --存储过程
 --查看满足条件的空房间信息
@@ -181,7 +180,7 @@ create trigger trig_customer_delete
  begin
 	declare @perNum int;
 	select @perNum = COUNT(*) from customer;
-	update hotelinfo set current_person_num = @perNum;
+	update hotelinfo set current_person_num = @perNum where id = 1;
  end;
 GO
 
@@ -204,19 +203,19 @@ create trigger trig_roominfo_insert_delete
 	select @roomNum = COUNT(*) from roominfo;
 	update hotelinfo set room_num = @roomNum;
 	select @vacantRoomNum = COUNT(*) from roominfo where state = '空闲';
-	update hotelinfo set vacant_room_num = @vacantRoomNum;
+	update hotelinfo set vacant_room_num = @vacantRoomNum where id = 1;
 	select @standardRoomNum = COUNT(*) from roominfo where type_id = 1;
-	update hotelinfo set standard_room_num = @standardRoomNum;
+	update hotelinfo set standard_room_num = @standardRoomNum where id = 1;
 	select @vacantStandardRoomNum = COUNT(*) from roominfo where type_id = 1 and state = '空闲';
-	update hotelinfo set vacant_standard_room_num = @vacantStandardRoomNum;
+	update hotelinfo set vacant_standard_room_num = @vacantStandardRoomNum where id = 1;
 	select @permanentRoomNum = COUNT(*) from roominfo where type_id = 2;
-	update hotelinfo set permanent_room_num = @permanentRoomNum;
+	update hotelinfo set permanent_room_num = @permanentRoomNum where id = 1;
 	select @vacantPermanentRoomNum = COUNT(*) from roominfo where type_id = 2 and state = '空闲';
-	update hotelinfo set vacant_permanent_room_num = @vacantPermanentRoomNum;
+	update hotelinfo set vacant_permanent_room_num = @vacantPermanentRoomNum where id = 1;
 	select @doubleBedRoomNum = COUNT(*) from roominfo where type_id = 3;
-	update hotelinfo set double_bed_room_num = @doubleBedRoomNum;
+	update hotelinfo set double_bed_room_num = @doubleBedRoomNum where id = 1;
 	select @vacantDoubleBedRoomNum = COUNT(*) from roominfo where type_id = 3 and state = '空闲';
-	update hotelinfo set vacant_double_bed_room_num = @vacantDoubleBedRoomNum;
+	update hotelinfo set vacant_double_bed_room_num = @vacantDoubleBedRoomNum where id = 1;
  end;
 GO
 
@@ -236,7 +235,7 @@ create trigger trig_livein_insert
 	select @roomNum = room_num from hotelinfo;
 	select @liveInRoomNum = COUNT(*) from livein;
 	select @occupancy = (@liveInRoomNum+0.0) / @roomNum;
-	update hotelinfo set occupancy = @occupancy;
+	update hotelinfo set occupancy = @occupancy where id = 1;
 	update roominfo set state = '入住' where room_id = @roomId;
  end;
 Go
@@ -290,3 +289,8 @@ if exists(select * from sysobjects where name='index_customer') DROP index index
 GO
 CREATE INDEX index_customer on customer(type_id desc);
 GO
+
+--添加数据
+--insert into hotelinfo(id) values(1);
+--insert into roomtype values (1,'标准间',2,180,100);
+--insert into roominfo(type_id,state) values (1,'空闲');

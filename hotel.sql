@@ -8,28 +8,30 @@ if exists(select * from sysobjects where name = 'checkout') drop table checkout;
 if exists(select * from sysobjects where name = 'livein') drop table livein;
 if exists(select * from sysobjects where name = 'operator') drop table operator;
 if exists(select * from sysobjects where name = 'customer') drop table customer;
-if exists(select * from sysobjects where name = 'customertype') drop table customertype;
+if exists(select * from sysobjects where name = 'membertype') drop table membertype;
 if exists(select * from sysobjects where name = 'roominfo') drop table roominfo;
 if exists(select * from sysobjects where name = 'roomtype') drop table roomtype;
+
+--创建会员类型表
+CREATE TABLE [dbo].[membertype](
+	[type_id] [int] primary key IDENTITY(0,1),
+	[member_type] [varchar](20) NOT NULL,
+	[discount] [float] NOT NULL,
+)
+GO
 
 --创建会员表
 CREATE TABLE [dbo].[member](
 	[m_id] [int] primary key IDENTITY,
 	[m_name] [varchar](20) NOT NULL,
+	[type_id] [int] NOT NULL,
 	[sex] [varchar](2) NOT NULL,
-	[credential_no] [varchar](20) NOT NULL,		--证件号
+	[credential_no] int NOT NULL,		--证件号
 	[m_tel] [varchar](11) NOT NULL,
 	[address] [varchar](50) NULL,
-	[discount] [float] NOT NULL,
+	FOREIGN KEY(type_id) REFERENCES [dbo].[membertype](type_id),
 	CONSTRAINT CK_sex1 CHECK (sex='男' OR sex='女'),
 ) 
-GO
-
---创建顾客类型表
-CREATE TABLE [dbo].[customertype](
-	[type_id] [int] NOT NULL primary key,			--0,1
-	[type] [varchar](10) NOT NULL,					--普通，会员
-)
 GO
 
 --创建房间类型表
@@ -46,7 +48,7 @@ GO
 CREATE TABLE [dbo].[roominfo](
 	[room_id] [int] primary key IDENTITY,
 	[type_id] [int] NOT NULL,
-	[state] [varchar](4) NOT NULL,
+	[state] [varchar](4) default '空闲',
 	[remark] [varchar](50) NULL,			--备注，可为空
 	foreign key([type_id]) references [dbo].[roomtype](type_id),
 	CONSTRAINT CK_state CHECK (state='空闲' OR state='入住'),
@@ -56,11 +58,11 @@ GO
 --创建顾客表
 CREATE TABLE [dbo].[customer](
 	[customer_id] [int] primary key IDENTITY,
-	[type_id] [int] default(0) NOT NULL,
+	[type_id] [int] default(0),
 	[customer_name] [varchar](20) NOT NULL,
 	[sex] [varchar](2) NOT NULL,
-	[credential_no] [varchar](20) NOT NULL,
-	foreign key([type_id]) references [dbo].[customertype](type_id),
+	[credential_no] int NOT NULL,
+	foreign key([type_id]) references [dbo].[membertype](type_id),
 	CONSTRAINT CK_sex2 CHECK (sex='男' OR sex='女'),
 )
 GO
@@ -77,13 +79,14 @@ GO
 CREATE TABLE [dbo].[livein](
 	[in_no] [int] primary key IDENTITY,
 	[room_id] [int] NOT NULL,
-	[customer_id] [varchar](50) NOT NULL,
+	[customer_id] [int] NOT NULL,
 	[person_num] [int] NOT NULL,
-	[in_time] [datetime] NOT NULL,			--入住时间
+	[in_time] [datetime] NULL,			--入住时间
 	[days] [int] NOT NULL,					--预计住房时间
 	[operator_id] [int] NOT NULL,
 	foreign key([room_id]) references [dbo].[roominfo](room_id),
 	foreign key([operator_id]) references [dbo].[operator](operator_id),
+	FOREIGN key(customer_id) REFERENCES customer(customer_id),
 )
 GO
 
@@ -91,7 +94,7 @@ GO
 CREATE TABLE [dbo].[checkout](
 	[chk_no] [int] primary key IDENTITY, 
 	[in_no] [int] NOT NULL,					
-	[chk_time] [datetime] NOT NULL,			--结算时间
+	[chk_time] [datetime] NULL,			--结算时间
 	[days] [int] default(0) NOT NULL,
 	[money] [float] default(0) NOT NULL,
 	[operator_id] [int] NOT NULL,
@@ -127,15 +130,17 @@ SELECT * from roominfo
 WHERE type_id = @typeId and state = '空闲'
 GO
 
---查看顾客是否为会员
-if exists(select * from sysobjects where type='p' and name='proc_is_member') drop PROCEDURE proc_is_member;
+--查看顾客类型
+if exists(select * from sysobjects where type='p' and name='proc_customer_type') drop PROCEDURE proc_customer_type;
 GO
-CREATE PROCEDURE proc_is_member
-	@credentialNo char,
-	@isMember int OUTPUT
+CREATE PROCEDURE proc_customer_type
+	@credentialNo int,
+	@typeId int OUTPUT
 	AS
-SELECT @ismember = count(*) from member
-where credential_no = @credentialNo
+	declare @flag int;
+	select @flag = count(*) from member where credential_no = @credentialNo;
+	if(@flag<=0) select @typeId = 0;
+	else select @typeId = type_id from member where credential_no = @credentialNo;
 GO
 
 --查看房间价钱
@@ -147,6 +152,30 @@ CREATE PROCEDURE proc_room_price
 	AS
 select @price = price from roomtype rt,roominfo ri
 where ri.type_id = rt.type_id and ri.room_id = @roomid
+GO
+
+--算钱
+if exists(select * from sysobjects where type='p' and name='proc_money_cal') drop PROCEDURE proc_money_cal;
+GO
+CREATE PROCEDURE proc_money_cal
+	@money float OUTPUT,
+	@chkNo int
+	AS
+	declare @inNo int;
+	declare @roomId int;
+	declare @customerId int;
+	declare @price float;
+	declare @days int;
+	declare @customerTypeId int;
+	declare @discount float;
+	select @inNo = in_no from checkout where chk_no = @chkNo;
+	select @roomId = room_id,@customerId = customer_id from livein where in_no = @inNo;
+	EXECUTE proc_room_price @price OUTPUT,@roomId;
+	select @days = days from checkout where chk_no = @chkNo;
+	select @customerTypeId = type_id from customer where customer_id = @customerId;
+	if NOT EXISTS(select * from membertype where type_id = @customerTypeId) select @discount = 1;
+	else select @discount = discount from membertype where type_id = @customerTypeId;
+	select @money = @price * @days * @discount;
 GO
 
 --触发器
@@ -161,12 +190,12 @@ create trigger trig_customer_insert
 	declare @perNum int;
 	declare @customerId int;
 	declare @typeId int;
-	declare @credentialNo char;
+	declare @credentialNo int;
 	select @customerId = customer_id,@credentialNo = credential_no from inserted;
-	EXEC proc_is_member @credentialNo,@typeId OUTPUT;
+	EXECUTE proc_customer_type @credentialNo,@typeId OUTPUT;
 	select @perNum = COUNT(*) from customer;
 	update hotelinfo set current_person_num = @perNum;
-	update customer set type_id = @typeId;  
+	update customer set type_id = @typeId where customer_id = @customerId;  
  end;
 GO
 
@@ -227,16 +256,21 @@ create trigger trig_livein_insert
  after insert
  as
  begin
+ 	declare @inNo int;
  	declare @roomId int;
 	declare @occupancy float;
 	declare @roomNum int;
 	declare @liveInRoomNum int;
+	declare @inTime datetime;
+	select @inTime = getdate();
+	select @inNo = in_no from inserted;
 	select @roomId = room_id from inserted;
 	select @roomNum = room_num from hotelinfo;
 	select @liveInRoomNum = COUNT(*) from livein;
 	select @occupancy = (@liveInRoomNum+0.0) / @roomNum;
 	update hotelinfo set occupancy = @occupancy where id = 1;
 	update roominfo set state = '入住' where room_id = @roomId;
+	update livein set in_time = @inTime where in_no = @inNo;
  end;
 Go
 
@@ -254,10 +288,12 @@ CREATE TRIGGER trig_checkout_insert
 	DECLARE @days int;
 	DECLARE @inTime DATETIME;
 	DECLARE @chkTime DATETIME;
-	SELECT @chkNo = chk_no,@inNo = in_no,@chkTime = chk_time from inserted;
+	SELECT @chkTime = getdate();
+	SELECT @chkNo = chk_no,@inNo = in_no from inserted;
 	SELECT @roomId = room_id,@inTime = in_time from livein where in_no = @inNO;
 	SELECT @days = datediff(day,@inTime,@chkTime);
 	UPDATE roominfo set state = '空闲' where room_id = @roomId;
+	UPDATE checkout set chk_time = @chkTime where chk_no = @chkNo;
 	UPDATE checkout set days = @days where chk_no = @chkNo;
  END;
 GO
@@ -291,6 +327,31 @@ CREATE INDEX index_customer on customer(type_id desc);
 GO
 
 --添加数据
---insert into hotelinfo(id) values(1);
---insert into roomtype values (1,'标准间',2,180,100);
---insert into roominfo(type_id,state) values (1,'空闲');
+insert into hotelinfo(id) values(1);
+insert into roomtype values (1,'标准间',2,200,100);
+insert into roomtype values (2,'单人房',1,100,50);
+insert into roomtype values (3,'双人房',1,150,100);
+insert into roominfo(type_id) values (1);
+insert into roominfo(type_id) values (1);
+insert into roominfo(type_id) values (1);
+insert into roominfo(type_id) values (2);
+insert into roominfo(type_id) values (2);
+insert into roominfo(type_id) values (3);
+insert into roominfo(type_id) values (3);
+insert into membertype(member_type,discount) values('非会员',1);
+insert into membertype(member_type,discount) values('普通会员',0.98);
+insert into membertype(member_type,discount) values('钻石会员',0.9);
+insert into membertype(member_type,discount) values('白金会员',0.88);
+insert into member(m_name,type_id,sex,credential_no,m_tel) values('赵书伟',3,'男',34198018,'123456');
+insert into member(m_name,type_id,sex,credential_no,m_tel) values('王文斌',3,'男',34192133,'654321');
+insert into member(m_name,type_id,sex,credential_no,m_tel) values('白龙马',2,'男',34192318,'000001');
+insert into member(m_name,type_id,sex,credential_no,m_tel) values('marry',2,'女',34198222,'222222');
+insert into member(m_name,type_id,sex,credential_no,m_tel) values('jack',2,'男',3331018,'199999');
+insert into member(m_name,type_id,sex,credential_no,m_tel) values('rose',1,'女',3433138,'333356');
+insert into operator(operator_name,pwd) values('charles','sadhd111');
+insert into operator(operator_name,pwd) values('rocks','qwer23333');
+insert into customer(customer_name,sex,credential_no) values('赵书伟','男',34198018);
+insert into customer(customer_name,sex,credential_no) values('王文斌','男',34192133);
+insert into customer(customer_name,sex,credential_no) values('白龙马','男',34192318);
+insert into customer(customer_name,sex,credential_no) values('rose','女',3433138);
+insert into customer(customer_name,sex,credential_no) values('amy','女',233333);

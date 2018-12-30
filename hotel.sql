@@ -288,13 +288,16 @@ CREATE TRIGGER trig_checkout_insert
 	DECLARE @days int;
 	DECLARE @inTime DATETIME;
 	DECLARE @chkTime DATETIME;
+	DECLARE @money float;
 	SELECT @chkTime = getdate();
 	SELECT @chkNo = chk_no,@inNo = in_no from inserted;
 	SELECT @roomId = room_id,@inTime = in_time from livein where in_no = @inNO;
-	SELECT @days = datediff(day,@inTime,@chkTime);
+	SELECT @days = datediff(day,@inTime,@chkTime)+1;
 	UPDATE roominfo set state = '空闲' where room_id = @roomId;
 	UPDATE checkout set chk_time = @chkTime where chk_no = @chkNo;
 	UPDATE checkout set days = @days where chk_no = @chkNo;
+	EXECUTE proc_money_cal @money OUTPUT,@chkno;
+	UPDATE checkout set money = @money where chk_no = @chkNo;
  END;
 GO
 
@@ -355,3 +358,5 @@ insert into customer(customer_name,sex,credential_no) values('王文斌','男',34192
 insert into customer(customer_name,sex,credential_no) values('白龙马','男',34192318);
 insert into customer(customer_name,sex,credential_no) values('rose','女',3433138);
 insert into customer(customer_name,sex,credential_no) values('amy','女',233333);
+insert into livein(room_id,customer_id,person_num,days,operator_id) values(2,1,2,5,1);
+insert into checkout(in_no,operator_id) values(1,1);
